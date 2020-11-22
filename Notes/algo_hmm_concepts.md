@@ -241,8 +241,117 @@ Direct sampling
 
 ![](https://i.imgur.com/nW9xFjE.png)
 
+### Rejectio sampling ??
 
+    缺點，當evidence出現的機率很低的時候，sampling會需要花很多時間才能完成
+    
+### Likelihood weighting 
+
+    not every event is equal，每個事件組合在抽樣出現的機率會經過weight修正
 
 ## ==Markov Chain Monte Carlo algo==
 
+    不是一直重新抽樣，而是從之前抽樣的結果稍微改變而產生新的sample。
+
+:::info
+重點概念就是，從前一次的抽樣結果，稍微改一下內容，產生新的抽樣結果
+:::
+
+## Gibbs sampling in Bayesian networks
+
+:::info
+核心概念: 一次變一個variable，從上次結果變成下一個sample，是與direct sample不同的地方。==可節省inference推論所需時間==
+
+針對X,Y,Z, E這四個變數，假設query為P(x|y,z)，則抽樣一次後將y,z的觀察值固定，僅改變non evidence的變數抽樣結果(改變X,E)，分別討論:
+
+1. X 抽樣: 給定X的markov blanket(child, parents, childs parents)的值下，去抽樣X變數。
+2. 
+::: 
+
+    MCMC的重點在於，sampling的依據是根據目前的狀態下，再去做sampling，得到query prob，而非重頭到尾重新sample，對於下棋來說，要到某個固定盤面的機率很低，若用direct很難遇到這樣得盤面。
+    
+-----
+
+# CH15 根據時間的機率推論。
+
+    當機率隨時間會產生改變(變數隨時間變化)，就會牽涉時間上的機率推論。
+
+:::info
+定義問題: 
+
+Transition model ： 給定之前的state，下一個state的機率。
+問題來了，P(Xt|X0.....Xt-1)中，條件的部分需要假設，才方便計算。
+這個假設就會利用markov assumption -> 假設時間t的state只跟t-1的state有關。
+
+first order Markov process, transition model -> P(Xt|Xt-1)
+並假設time series是平穩 (transition model 和絕對t無關)。
+:::
+
+==transition & sensor model 假設:==
+
+![](https://i.imgur.com/IzQJ8y6.png =80%x)
+
+
+![](https://i.imgur.com/gAQ3KuA.png =80%x)
+
+## ==Filtering==
+
+:::info
+(state esimation) filtering的定義: 給定t0 至t的觀察(evidence)，預估時間t的狀態。P(Xt | e1:t) -> ==一直從頭疊代==
+
+prediction: P(Xt+k | e1:t)
+:::
+
+![](https://i.imgur.com/KYdCS06.png =50%x)
+![](https://i.imgur.com/ctKSI05.png)
+![](https://i.imgur.com/HJVwPCM.png)
+
+
+## Smoothing: P(Xk | e1:t) for (1<k<t)
+
+:::info
+同樣利用recursive方式用backward(從t到k+1)，從後面推回來。
+:::
+
+![](https://i.imgur.com/pqPSgy5.png)
+
+稱為forward, backward algo
+
+## Most likely explanation : given sequence e1:t, 計算X1:t的機率。
+
+:::info
+利用smoothing的方式，給定e1...et，可以推測第k天的state(1<k<t)，則依照這個概念可以計算P(X1:t | e1:t)
+:::
+
+![](https://i.imgur.com/1gsj4ji.png)
+
+## 以上的計算法為 Viterbi algorithm 
+
+:::info
+Viterbi 三大概念
+1. recursive
+2. transition model 
+3. sensor model
+:::
+
+----
+
+# Hidden Markov Models 
+
+    1. hidden : 只能看到evidence，只能推估states。
+    2. markov : state 只和附近states有關
+    3. state is single discrete random variable
+    
+ 
+:::info 
+agent除了可用filter預估目前位置外，也能利用smoothing方法加上viterbi 去找出最佳可能路徑，估算目前距離。則應過越多序列後，儘管error rate高，準確度也能到不錯的水準
+:::
+ 
+![](https://i.imgur.com/XQHnY5V.png =50%x)
+
+## Kalman Filters 
+
+==假設states為連續變數，則HMM不適用，需使用kalman filters來判斷hidden state==
+
+# To be updated
 
